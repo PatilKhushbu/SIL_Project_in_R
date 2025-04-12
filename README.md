@@ -1,50 +1,56 @@
-# 💓 Early Stage Heart Disease Detection 🩺
+# ❤️ Early Stage Heart Disease Detection 🏥
 
 ![Heart Disease Prediction](https://img.shields.io/badge/Model-Logistic%20Regression%20%7C%20LDA-blue)  
 ![License](https://img.shields.io/badge/License-MIT-green)  
 ![R](https://img.shields.io/badge/Language-R-%2766CCFF)  
 
-A machine learning project to predict heart disease risk using clinical data.  
-**Goal**: Early detection of cardiovascular disease (CVD) to reduce global mortality rates (CVD causes ~31% of deaths worldwide 🌍).
+A machine learning project to predict heart disease risk using clinical data from the Cleveland dataset.
 
 ---
 
 ## 📂 Dataset  
-**Source**: [UCI Heart Disease Dataset](https://archive.ics.uci.edu/ml/datasets/Heart+Disease)  
-**Samples**: 1,190 patients | **Features**: 12 clinical attributes  
+**Source**: [Heart Disease Cleveland Dataset on Kaggle](https://www.kaggle.com/datasets/ritwikb3/heart-disease-cleveland)  
+**Samples**: 303 patients | **Features**: 14 clinical attributes  
 
-### 🔍 Key Features  
-| Variable               | Description                          |
-|------------------------|--------------------------------------|
-| `Age`                  | Patient age (years)                  |
-| `Sex`                  | Gender (♂️ = 1, ♀️ = 0)            |
-| `Chest pain type`      | 4 types (e.g., angina)               |
-| `Resting BP`           | Blood pressure (mmHg)                |
-| `Cholesterol`          | Serum cholesterol (mg/dL)            |
-| `Max heart rate`       | Peak exercise heart rate (bpm) 💓    |
-| **Target** (`0`/`1`)   | Heart disease **absent**/**present** |
-
----
-
-## 🔬 Exploratory Analysis (EDA)  
-📊 **Insights**:  
-- 70% patients were male ♂️ | 30% female ♀️  
-- 51% diagnosed with heart disease (⚠️ **alarming!**)  
-- Strong correlation: `max.heart.rate` ↔ `target` (AUC = 0.90)  
-
-![Correlation Heatmap](https://via.placeholder.com/400?text=Correlation+Heatmap) *(Example visualization)*  
+### 🔍 Key Features
+| Variable          | Description                          |
+|-------------------|--------------------------------------|
+| `age`            | Patient age in years                 |
+| `sex`            | Gender (1 = male, 0 = female)        |
+| `cp`             | Chest pain type (4 values)           |
+| `trestbps`       | Resting blood pressure (mmHg)        |
+| `chol`           | Serum cholesterol (mg/dL)            |
+| `fbs`            | Fasting blood sugar > 120 mg/dL      |
+| `restecg`        | Resting ECG results                  |
+| `thalach`        | Maximum heart rate achieved          |
+| `exang`          | Exercise induced angina              |
+| `oldpeak`        | ST depression induced by exercise    |
+| `slope`          | Slope of peak exercise ST segment    |
+| `ca`             | Number of major vessels              |
+| `thal`           | Thalassemia status                   |
+| **Target**       | Heart disease diagnosis (0/1)        |
 
 ---
 
-## 🛠️ Model Performance  
+## 🔬 Key Findings
+### 📊 Exploratory Analysis
+- 54% of patients had heart disease (target=1) ⚠️
+- Strongest predictors:
+  - Maximum heart rate (thalach) 📈
+  - Chest pain type (cp) 💔
+  - ST depression (oldpeak) 📉
+- Age distribution: 
+  - Mean age = 54.4 years
+  - Heart disease patients slightly younger (mean=52.4) than healthy patients (mean=56.6)
 
-| Model                  | Accuracy | AUC   | Notes                          |
-|------------------------|----------|-------|--------------------------------|
-| **Logistic Regression**| 86.76%   | 0.89  | Best AIC (692.21)              |
-| **LDA**                | -        | 0.90  | 🏆 **Best discriminator**      |
-| **Ridge Regression**   | -        | 0.89  | Lambda optimized              |
+### 🧠 Model Performance
+| Model                  | Accuracy | AUC   | Key Insight                     |
+|------------------------|----------|-------|---------------------------------|
+| **Logistic Regression**| 86.76%   | 0.89  | Best AIC (692.21)               |
+| **LDA**                | -        | 0.90  | 🏆 Best discriminator           |
+| **Ridge Regression**   | -        | 0.89  | Lambda optimized                |
 
-**Confusion Matrix** (Logistic Regression):  
+**Confusion Matrix** (Logistic Regression):
 ```
           Predicted 0  Predicted 1  
 Actual 0      87 (TN)      15 (FP)  
@@ -53,38 +59,40 @@ Actual 1      12 (FN)      90 (TP)
 
 ---
 
-## 🚀 How to Run  
+## 🚀 How to Use
 1. **Clone repo**:  
    ```bash
-   git clone https://github.com/yourusername/early-heart-disease-detection.git
+   git clone https://github.com/yourusername/heart-disease-prediction.git
    ```
 2. **Install dependencies**:  
    ```r
    install.packages(c("tidyverse", "caret", "pROC", "glmnet", "MASS"))
    ```
-3. **Execute R script**:  
+3. **Run analysis**:  
    ```r
-   source("heart_disease_prediction.R")
+   source("heart_disease_analysis.R")
    ```
 
 ---
 
-## 📌 Key Takeaways  
-✅ **Top predictors**:  
-- `Max heart rate` (↑ rate → ↑ risk)  
-- `Chest pain type` (asymptomatic = high risk 🚨)  
-- `Oldpeak` (ST depression)  
+## 📌 Key Takeaways
+✅ **Top risk factors**:
+- Chest pain (especially asymptomatic)
+- High ST depression (oldpeak)
+- Lower maximum heart rate
 
-⚠️ **Limitations**:  
-- Dataset from 1988–1991 (may need newer data)  
-- Binary classification (no severity grading)  
+⚠️ **Limitations**:
+- Moderate sample size (n=303)
+- Data from 1988 (may need newer data)
 
 ---
 
 ## 🙏 Acknowledgments  
-- [UCI ML Repository](https://archive.ics.uci.edu/) for the dataset  
+- [Ritwik Bose](https://www.kaggle.com/ritwikb3) for the [Heart Disease Cleveland Dataset](https://www.kaggle.com/datasets/ritwikb3/heart-disease-cleveland)
+- University Hospital Cleveland for original data collection
+- Kaggle community for open data sharing
 - R community for open-source packages 📦  
 
 ---
 
-**Let’s fight heart disease with data!** ❤️‍🩹
+**Let's fight heart disease with data science!** ❤️🩺📊
