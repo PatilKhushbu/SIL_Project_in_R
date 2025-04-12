@@ -81,11 +81,6 @@ Actual 1      12 (FN)      90 (TP)
 
 ---
 
-## 📜 License  
-MIT © [Khushbu Mahendra Patil](https://github.com/PatilKhushbu)  
-
----
-
 ## 🙏 Acknowledgments  
 - [UCI ML Repository](https://archive.ics.uci.edu/) for the dataset  
 - R community for open-source packages 📦  
