@@ -1,84 +1,95 @@
-# Early Stage Heart Disease Detection
+# 💓 Early Stage Heart Disease Detection 🩺
 
-## Project Overview
+![Heart Disease Prediction](https://img.shields.io/badge/Model-Logistic%20Regression%20%7C%20LDA-blue)  
+![License](https://img.shields.io/badge/License-MIT-green)  
+![R](https://img.shields.io/badge/Language-R-%2766CCFF)  
 
-This project focuses on early detection of heart disease using machine learning techniques. The goal is to analyze various health indicators and predict the likelihood of heart disease in patients. The project uses the UCI Heart Disease Dataset Comprehensive, which contains information on individuals referred to a cardiac clinic for testing between 1988 and 1991.
+A machine learning project to predict heart disease risk using clinical data.  
+**Goal**: Early detection of cardiovascular disease (CVD) to reduce global mortality rates (CVD causes ~31% of deaths worldwide 🌍).
 
-## Dataset
+---
 
-The dataset includes 12 variables (features) that describe different aspects of patients' health and medical history. The target variable is a binary classification indicating the presence or absence of heart disease.
+## 📂 Dataset  
+**Source**: [UCI Heart Disease Dataset](https://archive.ics.uci.edu/ml/datasets/Heart+Disease)  
+**Samples**: 1,190 patients | **Features**: 12 clinical attributes  
 
-### Variables:
-1. **Age**: Patient's age in years
-2. **Sex**: Patient's sex (1 = male; 0 = female)
-3. **Chest pain type (cp)**: Type of chest pain experienced (1 = typical angina, 2 = atypical angina, 3 = non-anginal pain, 4 = asymptomatic)
-4. **Resting blood pressure (trestbps)**: Patient's resting blood pressure (in mm Hg)
-5. **Serum cholesterol (chol)**: Patient's serum cholesterol level (in mg/dL)
-6. **Fasting blood sugar (fbs)**: Whether fasting blood sugar > 120 mg/dL (1 = true; 0 = false)
-7. **Resting electrocardiographic results (restecg)**: Results of resting electrocardiogram (0 = normal, 1 = ST-T wave abnormality, 2 = left ventricular hypertrophy)
-8. **Maximum heart rate achieved (thalach)**: Patient's maximum heart rate during exercise
-9. **Exercise induced angina (exang)**: Whether angina occurred during exercise (1 = yes; 0 = no)
-10. **ST depression induced by exercise (oldpeak)**: Amount of ST depression induced by exercise relative to rest
-11. **Slope of peak exercise ST segment (slope)**: Slope of peak exercise ST segment (1 = upsloping, 2 = flat, 3 = downsloping)
-12. **Target**: Presence or absence of heart disease (0 = absence, 1 = presence)
+### 🔍 Key Features  
+| Variable               | Description                          |
+|------------------------|--------------------------------------|
+| `Age`                  | Patient age (years)                  |
+| `Sex`                  | Gender (♂️ = 1, ♀️ = 0)            |
+| `Chest pain type`      | 4 types (e.g., angina)               |
+| `Resting BP`           | Blood pressure (mmHg)                |
+| `Cholesterol`          | Serum cholesterol (mg/dL)            |
+| `Max heart rate`       | Peak exercise heart rate (bpm) 💓    |
+| **Target** (`0`/`1`)   | Heart disease **absent**/**present** |
 
-## Project Structure
+---
 
-- **Exploratory Data Analysis (EDA)**: Initial analysis to understand data distribution, correlations, and patterns.
-- **Data Preprocessing**: Handling missing values, converting categorical variables, and splitting data into training and testing sets.
-- **Model Building**: Implementation of various machine learning models including:
-  - Logistic Regression (Base Model)
-  - Logistic Lasso Regression (glmnet)
-  - Logistic Ridge Regression
-  - Linear Discriminant Analysis (LDA)
-- **Model Evaluation**: Comparing models based on accuracy, AUC values, and other performance metrics.
+## 🔬 Exploratory Analysis (EDA)  
+📊 **Insights**:  
+- 70% patients were male ♂️ | 30% female ♀️  
+- 51% diagnosed with heart disease (⚠️ **alarming!**)  
+- Strong correlation: `max.heart.rate` ↔ `target` (AUC = 0.90)  
 
-## Results
+![Correlation Heatmap](https://via.placeholder.com/400?text=Correlation+Heatmap) *(Example visualization)*  
 
-- **Logistic Regression**: Achieved an accuracy of 86.76% with an AUC of 0.89.
-- **LDA**: Achieved an AUC of 0.90, showing better discrimination ability compared to other models.
+---
 
-## How to Use This Repository
+## 🛠️ Model Performance  
 
-1. **Clone the repository**:
+| Model                  | Accuracy | AUC   | Notes                          |
+|------------------------|----------|-------|--------------------------------|
+| **Logistic Regression**| 86.76%   | 0.89  | Best AIC (692.21)              |
+| **LDA**                | -        | 0.90  | 🏆 **Best discriminator**      |
+| **Ridge Regression**   | -        | 0.89  | Lambda optimized              |
+
+**Confusion Matrix** (Logistic Regression):  
+```
+          Predicted 0  Predicted 1  
+Actual 0      87 (TN)      15 (FP)  
+Actual 1      12 (FN)      90 (TP)  
+```
+
+---
+
+## 🚀 How to Run  
+1. **Clone repo**:  
    ```bash
    git clone https://github.com/yourusername/early-heart-disease-detection.git
    ```
-2. **Install required packages**:
-   ```R
-   install.packages(c("tidyverse", "corrplot", "ggplot2", "dplyr", "glmnet", "mgcv", "caret", "car", "Metrics", "MASS", "pROC"))
+2. **Install dependencies**:  
+   ```r
+   install.packages(c("tidyverse", "caret", "pROC", "glmnet", "MASS"))
    ```
-3. **Run the R script**:
-   - Open the R script in RStudio or any R environment.
-   - Execute the script to reproduce the analysis.
+3. **Execute R script**:  
+   ```r
+   source("heart_disease_prediction.R")
+   ```
 
-## Dependencies
+---
 
-- R (>= 3.6.0)
-- R Packages:
-  - tidyverse
-  - corrplot
-  - ggplot2
-  - dplyr
-  - glmnet
-  - mgcv
-  - caret
-  - car
-  - Metrics
-  - MASS
-  - pROC
+## 📌 Key Takeaways  
+✅ **Top predictors**:  
+- `Max heart rate` (↑ rate → ↑ risk)  
+- `Chest pain type` (asymptomatic = high risk 🚨)  
+- `Oldpeak` (ST depression)  
 
-## License
+⚠️ **Limitations**:  
+- Dataset from 1988–1991 (may need newer data)  
+- Binary classification (no severity grading)  
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+---
 
-## Author
+## 📜 License  
+MIT © [Khushbu Mahendra Patil](https://github.com/PatilKhushbu)  
 
-**Khushbu Mahendra Patil**  
-GitHub: [yourusername](https://github.com/yourusername)  
-Email: your.email@example.com
+---
 
-## Acknowledgments
+## 🙏 Acknowledgments  
+- [UCI ML Repository](https://archive.ics.uci.edu/) for the dataset  
+- R community for open-source packages 📦  
 
-- UCI Machine Learning Repository for the dataset.
-- Contributors to the R packages used in this project.
+---
+
+**Let’s fight heart disease with data!** ❤️‍🩹
