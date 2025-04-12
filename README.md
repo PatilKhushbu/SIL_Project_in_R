@@ -1,4 +1,3 @@
-# SIL-Project-in-R
 # Early Stage Heart Disease Detection
 
 ## Project Overview
