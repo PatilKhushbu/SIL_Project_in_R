@@ -1,0 +1,771 @@
+---
+title: "Early Stage Heart Disease Detection"
+author: "Khushbu Mahendra Patil"
+subtitle: Statistical Inference and Learning Project
+---
+
+# **SIL-Project: Early Stage Heart Disease Detection**
+
+#### Date: 2024-01-18
+
+## **Introduction**
+
+Medical dictation has traditionally been a high-maintenance sector in terms of time, accuracy, and expense. Humans are fallible and capable of making mistakes. Cases of cardiovascular illness are increasing at an alarming rate, which is highly concerning. The human mind cannot comprehend too much estimation in order to point out any forecast based on several aspects, and so may deliver wrong feedback multiple times, putting the patient's life at danger. Data mining has shown to be quite useful in projecting various situations in a variety of sectors. Several models have been created using data mining and deep learning in tandem to foresee certain scenarios for us to operate on.
+
+Similarly, the UCI dataset for Heart Disease Research was utilized to build a model that forecasts heart illness with the best accuracy using Machine learning models. Every year, around 1.5 million individuals die as a result of cardiovascular disease (CVD). It is responsible for about 31% of all fatalities worldwide. According to World Health Organization (WHO) figures, low- and middle-income countries account for 82 percent of worldwide premature mortality, with cardiovascular disease (CVD) accounting for 37 percent due to the late and incorrect prognosis of heart disease. While these illnesses are treatable, early prognosis and risk assessment of patients is critical to reducing the substantial mortality risks they represent. Common cardiovascular illnesses include coronary heart disease, Cardiomyopathy, hypertensive heart disease, heart failure, and others. Certain symptoms and lifestyle choices increase the risk of cardiovascular disease. Such patterns can also be used to predict cardiac disease.
+
+Machine Learning plays an essential role in the prediction of cardiac disease. Terms used in computer intelligence can be utilized to characterize the correlations between patient variables such as heart rate, obesity, and other disorders. Machine learning plays an important role in the medical field. It uses enormous databases and historical medical history to forecast sickness. Machine learning and approaches are being utilized to predict cardiac illnesses based on the patient's risk factors and clinical history. Several factors, such as heart rate, age, blood pressure (BP), obesity, sex, and others, are used as parameters to compare and predict heart disease.
+
+To describe the nature of our data, it is first studied using various Exploratory Data Analysis (EDA) approaches, then some standardization is applied to fix the data in the case of certain empty data cell problems. Under EDA approaches, the data is once again evaluated in order to learn various types and samples of data. The data is then sliced and split into two portions in order to train and test models.
+
+### The Dataset
+
+The Heart Disease Dataset Comprehensive is a freely accessible dataset maintained on IEEE Database. The dataset provides information on individuals who were referred to a cardiac clinic for testing between 1988 and 1991. The dataset contains 14 variables or traits that characterize various elements of the patients' health and medical history. The goal variable is a binary categorization showing the presence or absence of cardiac disease.
+
+12 variables from the dataset are:
+
+1.  Age: the age of the patient in years
+2.  Sex: the sex of the patient (1 = male; 0 = female)
+3.  Chest pain type (cp): the type of chest pain experienced by the patient (1 = typical angina, 2 = atypical angina, 3 = non-anginal pain, 4 = asymptomatic)
+4.  Resting blood pressure (trestbps): the patient's resting blood pressure (in mm Hg) upon admission to the clinic
+5.  Serum cholesterol (chol): the patient's serum cholesterol level (in mg/dL)
+6.  Fasting blood sugar (fbs): whether the patient's fasting blood sugar level is greater than 120 mg/dL (1 = true; 0 = false)
+7.  Resting electrocardiographic results (restecg): results of the resting electrocardiogram (0 = normal, 1 = having ST-T wave abnormality, 2 = showing probable or definite left ventricular hypertrophy)
+8.  Maximum heart rate achieved (thalach): the patient's maximum heart rate achieved during exercise
+9.  Exercise induced angina (exang): whether the patient experienced angina during exercise (1 = yes; 0 = no)
+10. ST depression induced by exercise relative to rest (oldpeak): the amount of ST depression induced by exercise relative to rest
+11. Slope of the peak exercise ST segment (slope): the slope of the peak exercise ST segment (1 = upsloping, 2 = flat, 3 = downsloping)
+
+### Target variable
+
+12. Diagnosis of heart disease (target): the presence or absence of heart disease (0 = absence, 1 = presence)
+
+## Exploratory Data Analysis
+
+Exploratory data analysis (EDA) is a method of examining and comprehending data by displaying and summarizing its key features. EDA's goal is to obtain insights into data and uncover patterns, correlations, and anomalies that might assist influence future analysis or decision-making.
+
+The basic purpose of EDA is to investigate and comprehend the structure of data, including its distribution, range, and variability. This includes assessing individual variables and their links to one another, as well as the general shape and organization of the data collection.
+
+Exploratory data analysis is a critical initial stage in every data analysis project because it lays the groundwork for later research and ensures that our results are correct and dependable.
+
+#### **Reading the Data-set**
+
+```{r}
+heart_disease <- read.csv("C:/Users/khush/OneDrive/Desktop/RProject - KW/heart_disease/heart_statlog_cleveland_hungary.csv")
+```
+
+```{r}
+# install.packages("tidyverse")
+# install.packages("corrplot")
+# install.packages("ggplot2")
+# install.packages("dplyr")
+# install.packages("glmnet")
+# install.packages("mgcv")
+# install.packages("caret")
+# install.packages("car")
+# install.packages("Metrics")
+# install.packages("MASS")
+```
+
+#### **Loading the necessary libraries**
+
+```{r}
+library(tidyverse)
+library(corrplot)
+library(ggplot2)
+library(dplyr)
+library(glmnet)
+library(mgcv)
+library(caret)
+library(car)
+library(Metrics)
+library(performance)
+library(pROC)
+library(MASS)
+```
+
+Let's understand our data
+
+```{r}
+#checking the column structure
+str(heart_disease)
+
+```
+```{r}
+#checking the summary of the dataset
+summary(heart_disease)
+```
+```{r}
+#converting the Categorical Data from Numeric to Factors
+heart_disease$sex<-factor(heart_disease$sex,levels =c(0,1),labels = c("female","male"))
+str(heart_disease)
+```
+```{r}
+#converting the Categorical Data from Numeric to Factors
+heart_disease$fasting.blood.sugar<-as.factor(heart_disease$fasting.blood.sugar)
+str(heart_disease)
+```
+
+```{r}
+#converting the Categorical Data from Numeric to Factors
+heart_disease$Chest.pain.type <- as.factor(heart_disease$Chest.pain.type)
+
+# Define the labels for the levels
+chest_pain_labels <- c(' Typical Angina ', ' Atypical Angina ', ' Non-anginal Pain ', ' Asymptomatic ')
+
+# Set the levels of the factor variable
+levels(heart_disease$Chest.pain.type) <- chest_pain_labels
+
+# Check the structure of the data frame
+str(heart_disease)
+```
+```{r}
+#converting the Categorical Data from Numeric to Factors
+heart_disease$resting.ecg<-as.factor(heart_disease$resting.ecg )
+str(heart_disease)
+```
+```{r}
+#converting the Categorical Data from Numeric to Factors
+heart_disease$exercise.angina<-as.factor(heart_disease$exercise.angina)
+str(heart_disease)
+```
+```{r}
+#converting the Categorical Data from Numeric to Factors
+heart_disease$ST.slope<-as.factor(heart_disease$ST.slope)
+str(heart_disease)
+```
+```{r}
+#converting the Categorical Data from Numeric to Factors
+heart_disease$target<-as.factor(heart_disease$target)
+str(heart_disease)
+```
+
+
+```{r}
+#checking for Nulls
+colSums(is.na(heart_disease))
+```
+
+```{r}
+#checking the dimensions
+dim(heart_disease)
+```
+
+```{r}
+head(heart_disease)
+```
+
+Data consists of 1190 observations on 12 variables
+
+```{r}
+#Descriptive statistics 
+mean <- mean(heart_disease$age)
+mean
+median <- median(heart_disease$age)
+median
+```
+
+Understanding the correlation between different variables is very helpful in understanding the dataset
+
+```{r}
+#correlation matrix
+numeric_data <- heart_disease[, sapply(heart_disease, is.numeric)]
+
+# Correlation matrix for numeric columns
+cor_matrix <- cor(numeric_data)
+round(cor_matrix, digits = 2)
+corrplot(cor_matrix, method = "color", type = "lower", tl.col = "black", tl.srt = 45)
+```
+
+A correlation heatmap is a graphical representation of the correlation matrix, which displays the pairwise correlations between distinct variables in a dataset. Here are some ways to help you comprehend a correlation heatmap:
+
+**Color Scale:** The color scale reflects the degree of the connection between two variables. Generally, a gradient is employed, with brighter colors signifying positive correlations and darker hues reflecting negative correlations. A color near to white or light yellow suggests a moderate association, whereas a color close to dark blue or black indicates a significant correlation.
+
+**Determine the strength of correlation:** The hue of the heatmap indicates the intensity of the association. A deeper hue suggests a higher association, whereas a lighter tint indicates a lesser correlation. If two variables have a positive correlation, then if one variable rises, so will the other. If two variables have a negative correlation, then when one one grows, the other variable decreases.
+
+**Interpretation**
+
+There is a strong correlation between target and max.heart.rate.Whereas it is interesting to see that there is no correlation between max.heart.rate and cholestrol.On the other hand, we can observe that there is a negative correlation between age and max.heart.rate,  target and oldpeak.
+
+#### Data Exploration
+
+```{r}
+#Checking the distribution of Age 
+ggplot(heart_disease,aes(x=age))+
+  geom_histogram(binwidth=1.1, color="white", fill = "indianred")+
+  geom_density(aes(y= after_stat(count)))
+
+```
+
+From above histogram we can observe that the **average age** of the patients in the dataset is around **57**
+
+```{r}
+#Pie-Chart for Gender distribution
+clr=c("indianred","#F6DDCC")
+par(mar=c(2,0,2,2))
+pie(table(heart_disease$sex),
+labels = paste0(round(table(heart_disease$sex) / nrow(heart_disease) * 100), "%"),
+radius=1.07, col=clr)
+legend("topleft", names(table(heart_disease$sex)), title = "Gender Distribution (male = 1 and Female = 0)", cex = 0.60, fill = clr)
+```
+
+Above pie-chart shows that the percentage of **Female is 30%** whereas **Male percentage is 70%** which is higher than the percentage of female patients in the dataset.
+
+```{r}
+#Pie-Chart for Distribution of Patients
+clr=c("tan","darksalmon")
+par(mar=c(2,0,2,2))
+pie(table(heart_disease$target),
+labels = paste0(round(table(heart_disease$target) / nrow(heart_disease) * 100), "%"),
+radius=1.07, col=clr)
+legend("bottomright", names(table(heart_disease$target)), title = "Distribution of Patients  (Abnormal = 1 and Normal = 0)", cex = 0.60, fill = clr)
+```
+
+Pie-chart shown above depicts that in our dataset, we have **51% are Heart Patients** and **49% are Normal Patients**. This information is interesting to see that based on our current dataset there is a large percentage of people that is diagnosed with Heart disease, which is alarming.
+
+```{r}
+#filtering the data of normal and abnormal patients
+normal <- filter(heart_disease, target == 0)
+abnormal <- filter(heart_disease, target == 1)
+```
+
+```{r}
+
+#Pie-Chart for Gender distribution of normal patients
+clr=c("darkgreen","salmon")
+par(mar=c(2,0,2,2))
+pie(table(normal$sex),
+labels = paste0(round(table(normal$sex) / nrow(normal) * 100), "%"),
+radius=1.07, col=clr)
+legend("topleft", names(table(normal$sex)), title = "Gender Distribution of Normal Patients (male = 1 and Female = 0)", cex = 0.60, fill = clr)
+
+
+```
+
+From the above pie-chart, we can observe that the gender distribution out of 17% normal patients in whole dataset, 62% normal patients are male and 83% female, which is not surprising for females since females patients are less than male in this dataset.
+
+```{r}
+#Checking the distribution of Age of normal patients
+ggplot(normal,aes(x=age))+
+  geom_histogram(binwidth=1.1, color="white" , fill = "blue")+
+  geom_density(aes(y= after_stat(count)))
+```
+
+If we look at this plot, we can see that the average age is around 55 to 65
+
+```{r}
+#Pie-Chart for Gender distribution
+clr=c("brown","orange")
+par(mar=c(2,0,2,2))
+pie(table(abnormal$sex),
+labels = paste0(round(table(abnormal$sex) / nrow(abnormal) * 100), "%"),
+radius=1.07, col=clr)
+legend("topleft", names(table(abnormal$sex)), title = "Gender Distribution of Heart Patients (male = 1 and Female = 0)", cex = 0.65, fill = clr)
+```
+
+This pie-chart is showing the percentage of male and female heart patients. It's interesting to note that 57% of patients are male out of 75% of the population of heart patients and only 43% are female. The chart concludes that the proportionally male are having more numbers compared to females among heart patients.
+```{r}
+#Checking the distribution of Age of Heart patients
+ggplot(abnormal,aes(x=age))+
+  geom_histogram(binwidth=1.1, color="white", fill = "brown")+
+  geom_density(aes(y= after_stat(count)))
+```
+
+Here we can observe that the mean age of the heart disease patients is around 42 to 57 years.
+
+```{r}
+#Checking different type of chest pains in Normal Patients
+Chest_Pain_Type <- factor(normal$Chest.pain.type)
+ggplot(normal, aes(x=Chest_Pain_Type))+
+  geom_bar(stat="count", width=0.7, fill=c("steelblue", "darkgreen","orange", "indianred")  )+
+  scale_x_discrete(labels=c('Typical Angina','Atypical Angina','Non-anginal Pain','Asymptomatic'))+
+   geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white")+
+  theme_minimal()
+```
+
+From this bar-plot we can observe that normal patients mostly experience Non-Anginal Pain and Atypical Angina pain and some of them experience asymptomatic pains also. A very small number of normal patients have also experienced Typical Angina pain but they were not diagnosed as heart patients.
+
+```{r}
+#Checking different type of chest pains in Heart Patients
+Chest_Pain_Type <- factor(abnormal$Chest.pain.type)
+ggplot(abnormal, aes(x=Chest_Pain_Type))+
+  geom_bar(stat="count", width=0.7, fill=c("steelblue", "darkgreen","orange", "indianred") )+
+  scale_x_discrete(labels=c('Typical Angina','Atypical Angina','Non-anginal Pain','Asymptomatic'))+
+  geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white")+
+  theme_minimal()
+```
+
+Above plot shows that approximately **51 patients** out of **629** heart patients felt ***Asymptomatic*** chest pains, and approximately **122** patients from this dataset felt ***Typical Angina*** pain.
+
+***Asymptomatic heart attacks***, also known as **silent heart attacks**, are a kind of heart attack that happens without any obvious symptoms. These sorts of heart attacks are more prevalent in older folks and diabetics, who may not experience usual chest pain or discomfort. Yet, just because there are no symptoms does not indicate that no harm is being done. Asymptomatic heart attacks can permanently damage the heart muscle and raise the risk of future heart issues. High blood pressure, high cholesterol, smoking, and a family history of heart disease are risk factors for asymptomatic heart attacks. Asymptomatic heart attacks can be treated with lifestyle modifications, drugs, and procedures such as angioplasty or stenting. Maintaining a healthy lifestyle, managing chronic diseases, and seeking regular medical treatment all help to lower the risk of asymptomatic heart attacks. If you believe you may have had an asymptomatic heart attack, speak with your doctor about your risk factors and treatment and preventative options [[1](https://www.mayoclinic.org/diseases-conditions/heart-attack/expert-answers/silent-heart-attack/faq-20057777#:~:text=A%20silent%20heart%20attack%20is,associated%20with%20a%20heart%20attack.)].
+
+#### Electrocardiogram (ECG):
+
+An electrocardiogram (ECG) is a medical test that records the electrical activity of the heart. It is a non-invasive test in which electrodes are placed on the chest, arms, and legs and then linked to a machine that captures the electrical impulses produced by the heart. The ECG is a visual picture of the electrical activity of the heart that can aid in the diagnosis of different cardiac problems such as arrhythmias, heart attacks, and heart failure. The examination is normally painless and takes only a few minutes to conduct. ECGs are routinely used in normal medical examinations as well as in emergency circumstances to monitor a patient's cardiac function. ECG interpretation necessitates specific expertise, and the data are often examined by a healthcare practitioner such as a cardiologist [[2](https://www.nhs.uk/conditions/electrocardiogram/)].
+
+```{r}
+#Checking the Rest ECG of Normal Patients
+Rest_ECG <- factor(normal$resting.ecg)
+ggplot(normal, aes(x=Rest_ECG))+
+  geom_bar(stat="count", width=0.7, fill=c("darkgreen","orange", "indianred") )+
+  scale_x_discrete(labels=c('Normal','ST-T Wave Abnormality','Left Ventricular Hypertrophy'))+
+  geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white")+
+  theme_minimal()
+
+```
+
+From this plot it not surprising to see that almost 283 normal patients had normal ECG, but what interesting is that almost 12 patients' ECG was concluded as left ventricular hypertrophy.
+
+```{r}
+#Checking the Rest ECG of Heart Patients
+Rest_ECG <- factor(abnormal$resting.ecg)
+ggplot(abnormal, aes(x=Rest_ECG))+
+  geom_bar(stat="count", width=0.7, fill=c("darkgreen","orange", "indianred") )+
+  scale_x_discrete(labels=c('Normal','ST-T Wave Abnormality','Left Ventricular Hypertrophy'))+
+  geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white")+
+  theme_minimal()
+```
+
+From this plot of the ECGs of Heart patients, it is surprising to observe that almost 214 heart patients' ECG was normal. Based on this information we can conclude that just abnormal ECG is not an indication of Heart Disease.
+
+#### ST Segment Slope
+
+The ST segment is a section of the ECG (electrocardiogram) that depicts the time between ventricular depolarization and repolarization. The ST segment is measured from the end of the QRS complex to the beginning of the T wave. The ST slope is the direction and angle of the ST segment in reference to the isoelectric line (the baseline) on the ECG.
+
+The ST slope can be upsloping, downsloping, or level. A typical ST segment is generally flat and parallel to the isoelectric line. A large departure from the baseline ST segment might suggest an anomaly in the heart's electrical conduction system and can be diagnostic of certain cardiac disorders such as myocardial ischemia (inadequate blood flow to the heart), myocardial infarction (heart attack), or pericarditis (inflammation of the lining of the heart).
+
+Cardiologists carefully assess the ST segment slope to establish the underlying cause of any irregularities and to design a suitable treatment strategy. They may also utilize further diagnostic procedures, such as cardiac enzyme analysis or echocardiography, to confirm a diagnosis and track the course of the problem [[3](https://www.ncbi.nlm.nih.gov/books/NBK459364/)].
+
+```{r}
+#Checking the ST Slope of Normal Patients
+ST_Slop <- factor(normal$ST.slope)
+ggplot(normal, aes(x=ST_Slop))+
+  geom_bar(stat="count", width=0.7, fill=c("darkgreen","orange", "indianred") )+
+  scale_x_discrete(labels=c('UpSloping','Flat','DownSloping'))+
+  geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white")+
+  theme_minimal()
+```
+
+Above plot is showing the ST Slope of Normal patients. We can see that UpSloping is a positive sign as almost 46 (9%) of the normal patients have UpSlope.
+
+
+
+```{r}
+#Checking the ST Slope of Heart Patients
+ST_Slope <- format(abnormal$ST.slope)
+
+ggplot(abnormal, aes(x = factor(ST_Slope))) +
+  geom_bar(stat = "count", width = 0.7, fill = c("darkgreen", "orange", "indianred")) +
+  scale_x_discrete(labels = c('UpSloping', 'Flat', 'DownSloping')) +
+  geom_text(aes(label = after_stat(count)), stat = "count", vjust = 1.5, colour = "white") +
+  theme_minimal()
+```
+
+From the above plot we can observe that about 158 (30%) patients have Flat Slope.
+
+#### Distribution of Cholesterol VS Resting Blood Pressure
+
+```{r}
+ggplot(heart_disease, aes(x=resting.bp.s, y=cholesterol, color=target)) +
+  geom_point()
+```
+
+**Observation:**
+
+According to the figure above, increased cholesterol levels combined with high blood pressure levels result in heart disease, whereas normal people have both cholesterol and blood pressure levels within the nominal range.
+
+
+#### Distribution of Age VS Resting Blood Pressure
+
+```{r}
+ggplot(heart_disease, aes(x=resting.bp.s, y=age, color=target)) +
+  geom_point() 
+
+  
+```
+
+**Observation:**
+
+According to the scatterplot above, older patients with blood pressure values greater than 150 are more likely to develop heart disease than younger individuals 50 years of age.
+
+#### Distribution of Age VS Maximum Heart Rate Achieved
+
+```{r}
+ggplot(heart_disease, aes(x=max.heart.rate, y=age, color=target)) +
+  geom_point() 
+
+```
+
+**Observation:**
+
+Above scatterplot suggests that they have achieved heart rate of more than 200 bpm of patient younger than 30 years of age. It also suggests that patients older than 50 years, tend to achieve heart rate from 50 bpm to 125 bpm. 
+
+
+```{r}
+
+```
+
+## Model Building
+
+**Test-Train Split**
+
+```{r}
+heart_disease$target <- as.factor(heart_disease$target)
+set.seed(100)
+TrainingIndex <- createDataPartition(heart_disease$target, p=0.8, list = FALSE)
+TrainingSet <- heart_disease[TrainingIndex,] # Training Set
+TestingSet <- heart_disease[-TrainingIndex,] # Test Set
+```
+
+Checking the dimension of the subset dataset
+
+```{r}
+dim(TrainingSet)
+dim(TestingSet)
+```
+
+We can group the features in four different categories: - Physical attributes: *age*; *sex* - General Health: *restingBP*; *Cholesterol*; *FastingBS* - ECG related results: *RestingECG*; *MaxHR*; *Oldpeak*; *ST_Slope*; - Symptomatic: *ChestPainType*; *ExerciseAngina*
+
+Considering that the response variable is binary, we start with a logistic regression with all features included - this is our base model. We also run the same model on the smaller dataset where 0 values were excluded from the set.
+
+## Logistic Regression (glm):
+
+**Base Model**
+
+```{r}
+model1<-glm(target~. , family="binomial", data=TrainingSet)
+summary(model1)
+```
+
+
+**Interpretation:**
+
+The model shows that gender(sex; male,female), type of chest pain type (chest pain type 1,2,and 3 respectively), resting bp,cholesterol levels, maximum heart rate, presence of exercise-induced angina, old peak (depression induced by exercise relative to rest)are all statistically significant predictors of the target outcome. In particular, gender(sex; male,female), chest pain type, max heart rate and old peak exhibit strong associations with the outcome, as evidenced by their respective coefficient estimates and high levels of statistical significance. While some variables, like resting blood pressure and resting ECG, are included in the model, they do not significantly contribute to predicting the target, given the presence of other predictors. The model's deviance residuals, ranging from -2.4912 to 2.4735, hint at the model's overall fit, suggesting it captures the data's structure reasonably well. The substantial drop in deviance from a simple model with no predictors (1137.61) to our current model (660.21) indicates that the included predictors indeed add valuable information. Finally, the model's Akaike Information Criterion (AIC) stands at 692.21, a metric that could be useful when comparing this model to others in terms of information loss.
+
+It is important to note that neither Fasting blood sugar1 nor Resting Blood Pressure (resting.ecg) are significant predictors of Target. Let's check the multi-collinearity.
+
+```{r}
+#Multi-collinearity Check
+vif(model1)
+```
+
+**Interpretation:**
+
+Variance Inflation Factor (VIF) quantifies how much the variance of an estimated regression coefficient increases when predictors are correlated. If no factors are correlated, the VIFs will all be equal to 1. Generally:
+
+-   A VIF of 1 indicates that there is no correlation between a given independent variable and any other independent variables in the model.
+
+-   A VIF between 1 and 5 suggests moderate correlation, but it's often considered acceptable.
+
+-   A VIF greater than 5 (or sometimes 10, depending on the threshold used in specific fields or studies) might indicate a problematic amount of collinearity.
+
+All the VIF values are well above 1 but notably below the conservative threshold of 5. This suggests that the predictors have some correlations with one another, but the multicollinearity is not at a level that is typically considered concerning.
+
+The highest VIF value is for max.heart.rate and oldpeak are at approximately 1.201864, which, while being the highest in this model, is still not worrisomely high.
+
+Fitting a model with only significant predictors:
+
+```{r}
+model2<-glm(target~ age + sex + Chest.pain.type + cholesterol + fasting.blood.sugar +
+              max.heart.rate + exercise.angina + oldpeak + ST.slope, family="binomial", data=TrainingSet)
+summary(model2)
+```
+
+**Interpretation:**
+
+
+The logistic regression model predicts target variables using predictor variables like age, sex, chest pain type, cholesterol, fasting blood sugar, max heart rate, exercise angina, oldpeak, and ST slope.
+
+The intercept represents the log-odds of an event when all predictor variables are zero. The coefficients for individual predictors are interpreted as follows: age (age) is associated with a decrease of approximately 0.027 in the log-odds, while being male is linked to a decrease of about 2.054 in log-odds compared to being female. There are three types of chest pain: atypical, non-anginal, and asymptomatic. Cholesterol is associated with a decrease of approximately 0.005 in log-odds, while fasting blood sugar is linked to a non-significant decrease. Max heart rate is associated with a significant increase of approximately 0.020 in log-odds, while exercise-induced angina is linked to a decrease of about 0.828 in log-odds. Oldpeak is associated with a decrease of approximately 0.674 in log-odds. ST slope is associated with a non-significant decrease of approximately 0.631 in log-odds and a non-significant decrease of approximately 0.142 in log-odds.
+
+The null deviance (1137.61) represents the deviance when only the intercept is considered, while the residual deviance (669.34) is lower, indicating that the model with predictors provides a better fit. The AIC score of 669.34 further supports the model's quality. While these statistical findings are valuable, domain expertise is essential for a comprehensive interpretation and application.
+**
+
+```{r}
+model3<-glm(target~ age + sex + Chest.pain.type + cholesterol + fasting.blood.sugar +
+              max.heart.rate + exercise.angina + oldpeak + ST.slope + 
+              max.heart.rate * Chest.pain.type , family="binomial", data=TrainingSet)
+summary(model3)
+```
+
+**Interpretation:**
+
+The logistic regression model predicts various factors such as age, sex, chest pain type, cholesterol, fasting blood sugar, max heart rate, exercise angina, oldpeak, and certain interactions. For each one-unit increase in age, the log-odds of the target variable decrease by approximately 0.02656, holding other variables constant. Being male is associated with a decrease of approximately 2.179 in the log-odds of the target variable compared to being female. Chest pain type (Atypical Angina, Non-anginal Pain, Asymptomatic) represents changes in log-odds for the respective Chest.pain.type levels compared to Typical Angina. Cholesterol (-0.005504) decreases the log-odds of the target variable by approximately 0.005504, holding other variables constant. Fasting blood sugar level (-0.2371) decreases the log-odds of the target by approximately 0.2371. Maximum heart rate (0.01022) corresponds to an increase of about 0.01022 in log-odds. Exercise-induced angina is linked to a decrease of about 0.8759 in log-odds compared to absence. Oldpeak (-0.7098) decreases the log-odds of the target variable by around 0.7098. ST.slope1 (-0.5800) and ST.slope2 (-0.06369) indicate changes in log-odds compared to the reference level. Interaction terms show additional effects on log-odds with interactions between max.heart.rate and Chest.pain.type.
+
+Significance codes indicate the level of significance for each variable. The model fits well based on deviance, AIC, and significance levels. Log-odds provide a way to understand the relationship between predictors and the likelihood of the target variable, but their interpretation might require further consideration and context.
+
+
+```{r}
+model4<-glm(target~ age + sex + Chest.pain.type + cholesterol + fasting.blood.sugar +
+              max.heart.rate + exercise.angina + oldpeak + ST.slope + 
+              max.heart.rate * Chest.pain.type + ST.slope * oldpeak , family="binomial", data=TrainingSet)
+summary(model4)
+```
+
+**Interpretation:**
+
+The log-odds of the target variable are 3.284 when all predictor variables are zero, providing a baseline level for the log-odds. Age is associated with a lower likelihood of the event, while being male is associated with a decrease in the log-odds. Chest pain type (Atypical Angina, Non-anginal Pain, Asymptomatic) and cholesterol have a negative relationship with the event's likelihood. Fasting blood sugar levels of 1 and a maximum heart rate of 0.01022 increase the log-odds of the target variable, while exercise-induced angina is associated with a decrease in the log-odds. Oldpeak (-0.7098) decreases the log-odds of the target variable by 0.7098 for each one-unit increase in ST depression induced by exercise relative to rest. ST slope (-0.5800) and ST slope (-0.06369) represent the change in log-odds for each level compared to the reference level. Interaction terms involve the multiplication of coefficients, such as the interaction between Chest.pain.type Non-anginal Pain and max.heart.rate, suggesting an additional effect on the log-odds when these two variables interact. Significance codes (***/**/*) indicate the level of significance for each variable, providing insights into how each variable is associated with the log-odds of the target variable while considering other variables in the model.
+
+The p-value is a statistical measure used to evaluate the evidence against a null hypothesis. In logistic regression, a p-value less than 0.05 indicates the coefficient is likely different from zero, rejecting the null hypothesis. A p-value greater than 0.05 indicates insufficient evidence to reject the null hypothesis, suggesting the predictor may not have a statistically significant impact on the response variable. 
+
+In logistic regression model interpretation, significance levels are denoted by asterisks: '***' (0.001) ,  '**' (0.01), and '*' (0.05).
+
+## Prediction
+
+we select model 4 based on the best AIC
+
+```{r}
+predicted_probs <- predict(model4, newdata = TestingSet, type = "response")
+```
+
+```{r}
+predicted_classes <- ifelse(predicted_probs > 0.5, 1, 0)
+```
+
+```{r}
+confusionMatrix(as.factor(predicted_classes), as.factor(TestingSet$target))
+```
+
+**Interpretation:**
+
+\
+**Confusion Matrix:**
+
+**True Negative (TN):** 87 observations were correctly predicted as class 0.
+
+**False Positive (FP):** 15 observations were wrongly predicted as class 1 when they were actually class 0.
+
+**False Negative (FN):** 12 observations were wrongly predicted as class 0 when they were actually class 1.
+
+**True Positive (TP):** 90 observations were correctly predicted as class 1.
+
+**Accuracy:** This metric represents the proportion of correct predictions out of the total predictions. The model's accuracy is 0.8676, or 86.76%. This means the model made correct predictions for 86.76% of the samples in the dataset.
+
+**95% CI:** The 95% confidence interval for the accuracy is (0.8133, 0.9109). This means we are 95% confident that the model's true accuracy lies within this interval.
+
+**No Information Rate (NIR):** This is the accuracy that could be achieved by always predicting the most frequent class. The NIR is 0.5147, which indicates that 51.47% of the samples belong to the most frequent class.
+
+**P-Value [Acc \> NIR]:** The p-value tests the hypothesis that the model's accuracy is no better than the NIR. A very low p-value (here, \<2e-16) suggests that the model is significantly better than just guessing based on the most frequent class.
+
+**Kappa:** This statistic measures the agreement between the predicted and actual classifications, corrected for what would be expected by chance. A kappa of 1 indicates perfect agreement, while a kappa of 0 indicates agreement equivalent to chance. A value of 0.7353 suggests good agreement.
+
+**Mcnemar's Test P-Value:** This tests the null hypothesis that the row and column marginal frequencies are equal (i.e., FP = FN). A p-value greater than 0.05 (here, 0.7003) suggests that there isn't a significant difference between the numbers of false positives and false negatives.
+
+**Sensitivity (or Recall):** Of all the actual positive instances, how many did we correctly predict? The model's sensitivity is 0.8788 or 87.88%.
+
+**Specificity:** Of all the actual negative instances, how many did we correctly predict? The model's specificity is 0.8571 or 85.71%.
+
+**Positive Predictive Value (PPV, or Precision):** Of all the predicted positives, how many were actual positives? The PPV is 0.8529 or 85.29%.
+
+**Negative Predictive Value (NPV):** Of all the predicted negatives, how many were actual negatives? The NPV is 0.8824 or 88.24%.
+
+**Prevalence:** This shows how often the positive condition actually occurs in our sample. The prevalence here is 0.4853 or 48.53%.
+
+**Detection Rate:** This is the rate at which we detect the positive condition, calculated as the number of true positives divided by the total number of samples. Here, it's 0.4265 or 42.65%.
+
+**Detection Prevalence:** The proportion of predicted positives from all samples is 0.5000 or 50%.
+
+**Balanced Accuracy:** This is the average of sensitivity and specificity, which provides a balanced view of the model's performance across both classes. It's 0.8680 or 86.80%.
+
+Lastly, the 'Positive' Class being defined as 0 means that the metrics provided (like Sensitivity, Specificity, etc.) are based on class 0 being considered as the 'positive' class in this binary classification context.
+
+## Logistic Lasso Regression (glmnet):
+
+We continue our analysis with linear regression models with a Lasso. This model will be particularly relevant for us, since it will show the degree of influence of the predictors.
+
+```{r}
+lasso_heart_disease <- read.csv("C:/Users/khush/OneDrive/Desktop/RProject - KW/heart_disease/heart_statlog_cleveland_hungary.csv")
+```
+
+In the following code the "target" variable in the "lasso_heart_disease" dataset to a numeric type and assigns it back to the "target" column. This can be useful when the "target" variable is originally stored as a different data type, and you want to ensure it is treated as numeric.
+
+```{r}
+# Fit Lasso regression with cross-validation
+lasso_heart_disease$target <- as.numeric(lasso_heart_disease$target)
+str(lasso_heart_disease)
+```
+The following code particularly useful when dealing with categorical variables represented by numeric codes, and you want to convert them to more meaningful factor levels. In this case, it transforms the "sex" variable from numeric (0, 1) to a factor with levels "female" and "male."
+
+```{r}
+lasso_heart_disease$sex<-factor(lasso_heart_disease$sex,levels =c(0,1),labels = c("female","male"))
+str(lasso_heart_disease)
+```
+Following code is Converting the "fasting.blood.sugar" variable to a factor,the "fasting.blood.sugar" variable is a factor with levels "0" and "1," indicating the absence or presence of fasting blood sugar, respectively.
+
+```{r}
+lasso_heart_disease$fasting.blood.sugar<-as.factor(lasso_heart_disease$fasting.blood.sugar)
+str(lasso_heart_disease)
+```
+Following code shows conversion of the "Chest.pain.type" variable to a factor the "Chest.pain.type" variable is a factor with levels "Typical Angina," "Atypical Angina," "Non-anginal Pain," and "Asymptomatic," reflecting the different categories of chest pain. 
+
+```{r}
+lasso_heart_disease$Chest.pain.type<-as.factor(lasso_heart_disease$Chest.pain.type)
+# Define the labels for the levels
+chest_pain_labels <- c(' Typical Angina ', ' Atypical Angina ', ' Non-anginal Pain ', ' Asymptomatic ')
+
+# Set the levels of the factor variable
+levels(lasso_heart_disease$Chest.pain.type) <- chest_pain_labels
+
+
+str(lasso_heart_disease)
+```
+Converting the "resting.ecg" variable to a factor,the "resting.ecg" variable is a factor with levels "0," "1," and "2."
+
+```{r}
+lasso_heart_disease$resting.ecg<-as.factor(lasso_heart_disease$resting.ecg )
+str(lasso_heart_disease)
+```
+Converting the "exercise.angina" variable to a factor,"exercise.angina" variable is a factor with levels "0" and "1."
+
+```{r}
+lasso_heart_disease$exercise.angina<-as.factor(lasso_heart_disease$exercise.angina)
+str(lasso_heart_disease)
+```
+Converting the "ST.slope" variable to a factor, "ST.slope" variable is a factor with levels "0," "1," and "2."
+
+```{r}
+lasso_heart_disease$ST.slope<-as.factor(lasso_heart_disease$ST.slope)
+str(lasso_heart_disease)
+```
+Converting the "target" variable to a factor, "target" variable is a factor with levels "0" and "1."
+
+```{r}
+lasso_heart_disease$target<-as.factor(lasso_heart_disease$target)
+str(lasso_heart_disease)
+```
+```{r}
+# Assuming binary variables are encoded as 0/1
+lasso_heart_disease$sex <- as.numeric(lasso_heart_disease$sex) - 1
+lasso_heart_disease$fasting.blood.sugar <- as.numeric(lasso_heart_disease$fasting.blood.sugar) - 1
+
+lasso_heart_disease[, -c(1, 13)] <- lapply(lasso_heart_disease[, -c(1, 13)], as.numeric)
+
+# Run LASSO regression
+x <- as.matrix(lasso_heart_disease[, -12])  # excluding the target variable
+y <- as.numeric(lasso_heart_disease$target) - 1
+cv_model <- cv.glmnet(x, y, alpha = 1, family = "binomial")
+```
+
+**Interpretation:**
+
+All columns (excluding the first and last columns) of the "lasso_heart_disease" data frame are converted to numeric type using lapply and as.numeric.The LASSO regression is run using the cv.glmnet function.
+The independent variables (features) are stored in the matrix x, excluding the target variable.
+The dependent variable (response) is stored in the vector y.
+The LASSO regression is performed with L1 regularization (alpha = 1) and using the binomial family.
+
+```{r}
+#find the optimal lambda
+best_lambda <- cv_model$lambda.min
+best_lambda
+```
+
+## Logistic Ridge Regression
+
+```{r}
+#cross validation
+cv_fit <- cv.glmnet(x,y, alpha = 0, family = "binomial") 
+```
+
+```{r}
+#find the optimal lambda
+best_lambda <- cv_fit$lambda.min
+best_lambda
+```
+
+```{r}
+ridge_model <- glmnet(x, y, alpha = 0, family = binomial)
+```
+
+```{r}
+plot(ridge_model)
+```
+
+```{r}
+plot(cv_model)
+```
+
+```{r}
+#find the coefficients of best model
+best_ridge_model <- glmnet(x,y, alpha = 0, family = binomial , lambda = best_lambda)
+coef(best_ridge_model)
+```
+```{r}
+ridge_predictions <- predict(best_ridge_model, newx = x, s = best_lambda, type = "response")
+glm.roc <- roc(heart_disease$target, ridge_predictions, plot = TRUE, print.auc = TRUE)
+
+```
+
+
+
+**Interpretation:** The AUC for the logistic Ridge regression is 0.89.
+
+
+## LDA - Linear Discriminant Analysis 
+
+```{r}
+lda.model <- lda(target ~ age + sex + Chest.pain.type + resting.bp.s + cholesterol + 
+                 fasting.blood.sugar + resting.ecg + max.heart.rate + exercise.angina + 
+                 oldpeak + ST.slope, data = heart_disease)
+```
+
+
+```{r}
+# Print the model summary
+print(lda.model)
+```
+
+```{r}
+# To predict on new data using the fitted model
+predictions <- predict(lda.model, newdata=heart_disease)
+head(predictions$class)
+```
+
+```{r}
+glm.roc <- roc(heart_disease$target, predictions$posterior[, "1"], plot = TRUE, print.auc = TRUE)
+```
+**Interpretation:**
+The AUC for the LDA is 0.90.
+
+
+The goal of LDA is to project the predictors (in this case, factors related to heart disease) onto a lower-dimensional space in such a way that the two categories of the response variable (target) are as separated as possible.
+
+**Prior probabilities of groups:**
+
+This displays the proportions of each class in the response variable target. There are two classes: 0 and 1. About 48.68% of the observations fall into class 0 and 51.31% into class 1. This means that the dataset is balanced between the two categories.
+
+**Group means:**
+
+This table provides the mean values of each predictor for each category of the target. For instance, the average age for group 0 is 56.56, while for group 1 it is 52.40 Comparing these means can give insights into how each predictor varies between the two categories. For instance, the chest.pain.type mean is notably higher for group 0 than for group 1, suggesting that this variable might be important in distinguishing the two groups.
+
+**Coefficients of linear discriminants:**
+
+The coefficients indicate the direction and magnitude of the effect of each predictor on the discriminant function. The discriminant function is a linear combination of the predictors that provides the best separation between the classes.
+
+For instance, sex has a coefficient of -1.08, suggesting that it has a relatively strong influence on the discriminant function. Positive coefficients mean that higher values of that predictor push the score towards one group, while negative coefficients push towards the other group. In this case, as the coefficient for sex is positive, higher values of sex (likely indicating "male") push the score towards the "1" group of the target variable.
+
+Similarly, max.heart.rate has a negative coefficient, indicating that higher heart rates are associated with the "0" group.
+
+Overall, the LDA model provides a linear combination of the predictors to maximize the separation between the two classes in the target variable. Using this model, you can project new observations into this discriminative space to classify them as either 0 or 1 based on which group mean they are closer to in the discriminative space.
+
+**Comparing models based on AUC values:**
+
+## What is AUC value?
+
+AUC, or "Area Under the Curve," is a metric used to assess the performance of a binary classification model, derived from the ROC curve, which represents the trade-off between true positive rate (sensitivity) and false positive rate (1-specificity) at different thresholds.
+
+
+In the context of AUC:
+
+1] True Positive Rate (Sensitivity): It is the proportion of actual positive instances correctly predicted as positive by the model.
+
+2] False Positive Rate (1 - Specificity): It is the proportion of actual negative instances incorrectly predicted as positive by the model.
+
+AUC values range from 0 to 1, where:
+
+AUC = 0.5 suggests no discrimination (random guessing).
+AUC < 0.5 suggests the model performs worse than random.
+AUC > 0.5 suggests better-than-random performance, with higher values indicating better discrimination.
+
+A model with a higher AUC is considered better at distinguishing between classes.
+
+Here, we are getting similar AUC values for LASSO and Ridge regression which is 0.89.If two models have the same AUC values,it indicates that, based on this specific metric, they perform equally well in distinguishing between positive and negative instances.and For LDA - Linear Discriminant Analysis the AUC value is 0.904; means LDA is having higher AUC value which means LDA has better discrimination ability.
